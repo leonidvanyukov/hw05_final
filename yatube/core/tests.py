@@ -1,5 +1,3 @@
-from http import HTTPStatus
-
 from django.test import TestCase
 
 
@@ -9,7 +7,7 @@ class ViewTestClass(TestCase):
         template = 'core/404.html'
         response = self.client.get('/nonexist-page/')
         self.assertTemplateUsed(
-                    response,
-                    template,
-                    f'response = {response}, template = {template}'
-                )
+            response,
+            template,
+            f'response = {response}, template = {template}'
+        )

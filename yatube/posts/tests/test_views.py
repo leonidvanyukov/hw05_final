@@ -43,10 +43,10 @@ class PostViewTest(TestCase):
             description='test-description',
         )
         cls.post = Post.objects.create(
-                author=cls.user,
-                text='test-text',
-                image=cls.uploaded,
-                group=cls.group
+            author=cls.user,
+            text='test-text',
+            image=cls.uploaded,
+            group=cls.group
         )
         cls.second_group = Group.objects.create(
             title='second-title',
@@ -377,7 +377,8 @@ class CacheViewTest(TestCase):
             'Не возвращает кэшированную страницу.'
         )
         cache.clear()
-        response_new = CacheViewTest.authorized_client.get(reverse('posts:index'))
+        response_new = CacheViewTest.authorized_client.\
+            get(reverse('posts:index'))
         new_posts = response_new.content
         self.assertNotEqual(old_posts, new_posts, 'Нет сброса кэша.')
 
@@ -510,7 +511,8 @@ class FollowViewTest(TestCase):
         )
 
     def test_new_author_post_for_unfollower(self):
-        """Проверка, что новый пост автора не появляется в ленте подписок после отписки"""
+        """Проверка, что новый пост автора не
+        появляется в ленте подписок после отписки"""
         client = FollowViewTest.authorized_user_unfol_client
         author = FollowViewTest.author
         group = FollowViewTest.group
