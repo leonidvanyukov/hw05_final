@@ -7,7 +7,7 @@ from .utils import count_elements, create_paginator
 
 
 def index(request):
-    post_list = Post.objects.all()
+    post_list = Post.objects.select_related('group').all()
     page_obj = create_paginator(post_list, request.GET.get('page'))
     context = {
         'page_obj': page_obj,
@@ -30,11 +30,12 @@ def group_posts(request, slug):
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
-    following = request.user.is_authenticated and \
+    following = request.user.is_authenticated and (
         Follow.objects.filter(
             user=request.user,
             author=author,
         ).exists()
+    )
     author_posts = author.posts.all()
     page_obj = create_paginator(author_posts, request.GET.get('page'))
     posts_count = count_elements(author_posts)
@@ -135,13 +136,17 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     author = get_object_or_404(User, username=username)
-    already_following = Follow.objects.filter(author=author).\
-        filter(user=request.user).exists()
-    if already_following is False and request.user != author:
-        Follow.objects.create(
-            user=request.user,
-            author=author,
-        )
+    already_following = Follow.objects.filter(
+        author=author
+    ).filter(
+        user=request.user
+    ).exists()
+    if request.user != author:
+        Follow.objects.get_or_create(user=request.user, author=author,
+                                     defaults={
+                                         'user': request.user,
+                                         'author': author
+                                     })
     return redirect('posts:profile', username)
 
 

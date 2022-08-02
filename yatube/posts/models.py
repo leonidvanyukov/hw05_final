@@ -52,12 +52,6 @@ class Post(models.Model):
     def __str__(self):
         return self.text[:15]
 
-    class Meta:
-        ordering = ['-pub_date']
-
-    def __str__(self):
-        return self.text[:15]
-
 
 class Comment(models.Model):
     post = models.ForeignKey(
@@ -94,3 +88,8 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         related_name='following'
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'author'], name='unique follow')
+        ]

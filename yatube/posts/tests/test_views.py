@@ -377,8 +377,9 @@ class CacheViewTest(TestCase):
             'Не возвращает кэшированную страницу.'
         )
         cache.clear()
-        response_new = CacheViewTest.authorized_client.\
-            get(reverse('posts:index'))
+        response_new = CacheViewTest.authorized_client.get(
+            reverse('posts:index')
+        )
         new_posts = response_new.content
         self.assertNotEqual(old_posts, new_posts, 'Нет сброса кэша.')
 
@@ -444,6 +445,10 @@ class FollowViewTest(TestCase):
         client = FollowViewTest.authorized_user_unfol_client
         user = FollowViewTest.user_unfol
         author = FollowViewTest.author
+        Follow.objects.create(
+            user=user,
+            author=author
+        )
         client.get(
             reverse(
                 'posts:profile_unfollow',
